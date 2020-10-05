@@ -1,15 +1,16 @@
 #pragma once
 #include "StateMachine.h"
 
-StateMachine::StateMachine()
+StateMachine::StateMachine(fp_t mainState)
 {
-	this->mainState = nullptr;
+	this->mainState = mainState;
 }
 
 fp_t StateMachine::getMainState()
 {
 	return this->mainState;
 }
+
 
 fp_t StateMachine::getState(State state)
 {
@@ -24,11 +25,6 @@ fp_t StateMachine::getState(State state)
 		func = nullptr;
 	}
 	return func;
-}
-
-void StateMachine::setMainState(fp_t func)
-{
-	this->mainState = func;
 }
 
 void StateMachine::addState(fp_t func, State state)

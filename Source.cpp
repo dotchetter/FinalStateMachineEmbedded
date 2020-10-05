@@ -16,8 +16,7 @@ int main()
 {
 	fp_t f;
 
-	StateMachine sm = StateMachine();
-	sm.setMainState(&stateOne);
+	StateMachine sm = StateMachine(&stateOne);
 
 	f = sm.getMainState();
 	f();
