@@ -2,19 +2,21 @@
 #include "StateMachine.h"
 #include <vector>
 
-StateMachine::StateMachine(){}
+StateMachine::StateMachine()
+{
+}
 
-f_ptr StateMachine::getMainState()
+fp_t StateMachine::getMainState()
 {
 	return this->mainState;
 }
 
-void StateMachine::setMainState(f_ptr* p)
+void StateMachine::setMainState(fp_t func)
 {
-	this->mainState = p;
+	this->mainState = func;
 }
 
-void StateMachine::addState(f_ptr* p, f_ptr* transition=NULL)
+void StateMachine::addState(fp_t func)
 {
-	this->methods.push_back(p);
+	this->methods.push_back(func);
 }

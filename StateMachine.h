@@ -1,18 +1,18 @@
 #pragma once
 #include <vector>
 
-typedef void(*f_ptr);
+typedef void (*fp_t)();
 
 class StateMachine
 {
-	std::vector<void(*)> methods;
-	f_ptr mainState;
+	std::vector<fp_t> methods;
+	fp_t mainState;
 
 public:
 
 	StateMachine();
-	f_ptr getMainState();
-	void setMainState(f_ptr* p);
-	void addState(f_ptr* p, f_ptr* transition=NULL);
-	
+
+	fp_t getMainState();
+	void setMainState(fp_t func);
+	void addState(fp_t func);
 };
