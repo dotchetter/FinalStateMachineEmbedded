@@ -1,11 +1,13 @@
 #pragma once
-#include <vector>
+#include "States.h"
+#include "StateMachine.h"
+#include <map>
 
 typedef void (*fp_t)();
 
 class StateMachine
 {
-	std::vector<fp_t> methods;
+	std::map<State, fp_t> methods;
 	fp_t mainState;
 
 public:
@@ -13,6 +15,7 @@ public:
 	StateMachine();
 
 	fp_t getMainState();
+	fp_t getState(State state);
 	void setMainState(fp_t func);
-	void addState(fp_t func);
+	void addState(fp_t func, State state);
 };
