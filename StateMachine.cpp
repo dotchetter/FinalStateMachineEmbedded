@@ -1,20 +1,23 @@
 #pragma once
 #include "StateMachine.h"
 
-StateMachine::StateMachine(fp_t mainState)
+StateMachine::StateMachine(fp_t mainMethod, State mainState)
 {
+	this->mainMethod = mainMethod;
 	this->mainState = mainState;
 }
 
-fp_t StateMachine::getMainState()
+
+const State StateMachine::getMainState()
 {
 	return this->mainState;
 }
 
 
-fp_t StateMachine::getState(State state)
+const State StateMachine::getCurrentState()
 {
-	fp_t func;
+	return this->currentState;
+}
 
 
 const State StateMachine::getTransitionalStateForState(State state)
@@ -36,21 +39,88 @@ const State StateMachine::getTransitionalStateForState(State state)
 	}
 	return this->mainState;
 }
+
+
+const fp_t StateMachine::getMethodForState(State state)
+/*
+* Iterate over the states and return the method
+* on the same index position as the given state
+* in the linked arrays.
+*/
+{
+	for (int i = 0; i < this->stateCount; i++)
 	{
 		if (states[i] == state)
 		{
-			return methods[i];
+			return this->methods[i];
 		}
-	}return nullptr;
+	}return this->mainMethod;
 }
 
-void StateMachine::addState(fp_t func, State state)
+
+void StateMachine::release()
+/*
+* Mutates the instance's currentState to whichever
+* state is defined as the transitional state for 
+* the state the machine is in at the given time 
+* of call.
+*/
 {
-	if (this->lastAddedState > sizeof(this->methods) / sizeof(this->methods[0]))
+	this->nextState = this->getTransitionalStateForState(this->currentState);
+}
+
+void StateMachine::transitionTo(State state)
+/*
+* Allows methods to mutate the state of the machine
+* to transition to another method in the call stack.
+* It is however only allowed if the current state is
+* the main state, that is, it cannot interrupt an
+* ongoing transition between one secondary state and 
+* another. 
+*/
+{
+	if (this->currentState == this->mainState)
 	{
-		return;
+		this->nextState = state;
 	}
-	this->methods[this->lastAddedState] = func;
-	this->states[this->lastAddedState] = state;
-	this->lastAddedState++;
+}
+
+const fp_t StateMachine::next()
+/*
+* Allows for a continuous polling method to be called
+* which returns the method for the state the machine
+* is in at the time of call. The previous state is cached
+* as to reduce lookup time and CPU cycles spent on searching,
+* if the state from the previous call is left unchanged.
+* 
+* Protects the application from an infinite loop where
+* the state is left unchanged by misbehaving state methods
+* which do not call the transition() method. This validation
+* is implemented by not allowing the same state to occur twice
+* or more in sequence.
+*/
+{
+	
+	if (this->currentState == this->nextState)
+	{
+		this->nextState = this->mainState;
+	}
+
+	this->currentState = this->nextState;
+	return this->getMethodForState(this->nextState);
+}
+
+void StateMachine::addState(fp_t func, State state, State transition)
+{
+	if (this->stateCount < sizeof(this->methods) / sizeof(this->methods[0]))
+	{
+		this->methods[this->stateCount] = func;
+		this->states[this->stateCount] = state;
+		this->transitionalStates[this->stateCount] = transition;
+		this->stateCount++;
+	}
+	else
+	{
+		throw std::exception("Maximum allowed number of states allocated");
+	}
 }
