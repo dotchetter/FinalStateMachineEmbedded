@@ -6,6 +6,7 @@
 
 typedef void (*fp_t)();
 
+
 class StateMachine
 /*
 * State machine class.
@@ -53,15 +54,28 @@ class StateMachine
 * uses it as a transition.
 */
 {
-	int lastAddedState;
-	fp_t methods[256];
-	State states[256];
-	fp_t mainState;
+private:
+
+	int stateCount;
+	State currentState;
+	State mainState;
+	fp_t mainMethod;	
+	fp_t methods[128];
+	State transitionalStates[128];
+	State states[128];
+	State nextState;
+	const fp_t getMethodForState(State state);
+	const State getTransitionalStateForState(State state);
 
 public:
 
-	StateMachine(fp_t mainState);
-	fp_t getMainState();
-	fp_t getState(State state);
-	void addState(fp_t func, State state);
+	StateMachine(fp_t mainMethod, State mainState);
+		
+	const State getMainState();
+	const fp_t next();
+
+	const State getCurrentState();
+	void release();
+	void transitionTo(State state);
+	void addState(fp_t func, State state, State transition=State::IDLE);
 };
