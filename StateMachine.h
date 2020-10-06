@@ -8,10 +8,10 @@ typedef void (*fp_t)();
 
 class StateMachine
 {
-	std::map<State, fp_t> methods;
-	std::map<fp_t, std::vector<State>> stateMap;
+	int lastAddedState;
+	fp_t methods[256];
+	State states[256];
 	fp_t mainState;
-	fp_t lastPolledState;
 
 public:
 

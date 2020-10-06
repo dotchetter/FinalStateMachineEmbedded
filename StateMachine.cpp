@@ -16,18 +16,22 @@ fp_t StateMachine::getState(State state)
 {
 	fp_t func;
 
-	try
+	for (int i = 0; i < lastAddedState; i++)
 	{
-		func = this->methods.at(state);
-	}
-	catch (const std::exception&)
-	{
-		func = nullptr;
-	}
-	return func;
+		if (states[i] == state)
+		{
+			return methods[i];
+		}
+	}return nullptr;
 }
 
 void StateMachine::addState(fp_t func, State state)
 {
-	this->methods[state] = func;
+	if (this->lastAddedState > sizeof(this->methods) / sizeof(this->methods[0]))
+	{
+		return;
+	}
+	this->methods[this->lastAddedState] = func;
+	this->states[this->lastAddedState] = state;
+	this->lastAddedState++;
 }
