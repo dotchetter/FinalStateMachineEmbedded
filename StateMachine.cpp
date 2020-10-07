@@ -119,8 +119,4 @@ void StateMachine::addState(fp_t func, State state, State transition)
 		this->transitionalStates[this->stateCount] = transition;
 		this->stateCount++;
 	}
-	else
-	{
-		throw std::exception("Maximum allowed number of states allocated");
-	}
 }
