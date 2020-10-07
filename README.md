@@ -109,9 +109,9 @@ void idle()
 {
     if (key1_pressed) // psuedo code
     {
-        sm.transitionTo(State::BlinkLed);
+        sm.transitionTo(States::START_STEPPER_MOTOR);
     }
-    else if (key2_pressed)
+    else if (key2_pressed) // psuedo code
     {
     	sm.transitionTo(State::BLINK_LED);
     }
