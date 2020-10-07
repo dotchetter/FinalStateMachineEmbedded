@@ -31,6 +31,22 @@ The **StateMachine** will automatically revert to the idle function where you ha
 
 Inside of a state function you can ask the **StateMachine** instance which state it is in at the moment, if it is not evident. You cannot however alter the state manually outside of the `main method` which is defined upon instantiation.
 
+Each state is responsible of letting go of it's own state by caling `StateMachineInstance.release()` before they run out of scope. If a function misbehaves and skips this,
+the StateMachine instance will revert to it's mainstate automatically as to prevent endless loops and blocking code. This, however will interrupt the method's chained state, if it had one defined, which will not run in that case.
+
+**To use this library on an Arduino**:
+* Download this repository as a zip. Add it to libraries following this guide: https://www.arduino.cc/en/guide/libraries and scroll down to *Importing a .zip Library*.
+* Open States.h where the library is installed, and edit the enum class to define the states you have in your firmware. The default ones are:
+```cpp
+enum class State
+{
+	IDLE,	// Default main state, editing requires modification of StateMachine.h row 80 col 57
+	READ_PROXIMITY_SENSOR,
+	STOP_MOTORS,
+	CHECK_KEY_PRESS
+};
+```
+
 
 
 ### Chained states
