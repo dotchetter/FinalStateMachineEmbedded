@@ -24,7 +24,7 @@ void loop()
 
 ### How to use it
 
-The StateMachine both allows you to kick it back and let it handle the state alternation for you. 
+The StateMachine allows you to kick it back and let it handle the state alternation for you. 
 After you've instantiated it and given it function pointers with Enum's to bind them, you can simply call the `next()` method which will give you a pointer to the function for the state next in line.
 
 The **StateMachine** will automatically revert to the idle function where you have code that read sensors, send things to WiFi or whatever else. Recursion is also taken care of - no risk of a function assigning itself as next in line - it's not allowed to.
@@ -92,7 +92,7 @@ void checkMotorTemp()
 void idle()
 {
 
-	if (key1_pressed) // psuedo code
+    if (key1_pressed) // psuedo code
     {
         sm.transitionTo(State::BlinkLed);
     }
