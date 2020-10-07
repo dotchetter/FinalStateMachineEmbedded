@@ -1,11 +1,8 @@
 #pragma once
 #include "States.h"
 #include "StateMachine.h"
-#include <map>
-#include <vector>
 
 typedef void (*fp_t)();
-
 
 class StateMachine
 /*

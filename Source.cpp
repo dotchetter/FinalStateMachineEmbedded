@@ -55,8 +55,7 @@ int main()
 
 	while (1)
 	{
-		f = sm.next();
-		f();
+		sm.next()();
 		getchar();
 	}
 }
