@@ -46,7 +46,7 @@ When you want to chain another state after a certain one has exhausted, it is si
 ### Here's an example:
 
 ```c
-#inclucde "StateMachine.h"
+#include "StateMachine.h"
 #include "States.h"  // Edit the enums in this file to match your desired states
 
 // compiler contract, we will define these later
@@ -91,7 +91,6 @@ void checkMotorTemp()
 
 void idle()
 {
-
     if (key1_pressed) // psuedo code
     {
         sm.transitionTo(State::BlinkLed);
