@@ -95,7 +95,7 @@ const fp_t StateMachine::next()
 * 
 * Protects the application from an infinite loop where
 * the state is left unchanged by misbehaving state methods
-* which do not call the transition() method. This validation
+* which do not call the release() method. This validation
 * is implemented by not allowing the same state to occur twice
 * or more in sequence.
 */
