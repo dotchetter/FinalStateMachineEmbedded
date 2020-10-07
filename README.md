@@ -78,7 +78,8 @@ StateMachine sm = StateMachine(&idle, State::IDLE);
 
 // Add all the states which correlates to our functions
 sm.addState(&blinkLed, States::BLINK_LED);
-sm.addState(&startStepperMotor, States::STOP_STEPPER_MOTOR)
+sm.addState(&startStepperMotor, States::START_STEPPER_MOTOR)
+sm.addState(&stopStepperrMotor, States::STOP_STEPPER_MOTOR)
 sm.addState(&checkMotorTemp, States::CHECK_MOTOR_TEMP)
     
 // A chained mapping of state - the last one will run after the first one exhausts
