@@ -1,6 +1,11 @@
 # StateMachineEmbedded
 
-
+### TLDR; Download ZIP library for Arduino IDE
+0. Click "Releases" to the right
+2. Download "Arduino IDE Library"
+3. Open Arduino IDE and click Sketch -> Include Library -> Import ZIP library, and navigate to the downloaded .zip file
+4. To use the library in a project click Sketch -> Include Library -> StateMachineEmbedded
+5. To see examples, click File -> Examples -> StateMachineEmbedded
 
 ### What it does
 
@@ -48,16 +53,6 @@ Inside of a state function you can ask the **StateMachine** instance which state
 
 Each state is responsible of letting go of it's own state by caling `StateMachineInstance.release()` before they run out of scope. If a function misbehaves and skips this,
 the StateMachine instance will revert to it's mainstate automatically as to prevent endless loops and blocking code. This, however will interrupt the method's chained state, if it had one defined, which will not run in that case.
-
-
-
-**To use this library on an Arduino**:
-
-* Download this repository as a zip. Add it to libraries following this guide: https://www.arduino.cc/en/guide/libraries and scroll down to *Importing a .zip Library*.
-
-  
-
-
 
 ### Chained states
 
