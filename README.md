@@ -12,8 +12,8 @@
 This project is the result of an attempt to develop a function-pointer-managing-final-statemachine,
 which makes it easier to develop code with transitions between states in embedded systems.
 
+### Memory safe
 It can map up to `128` functions as states, and due to memory restrictions on small devices, these are statically allocated arrays of fixed size.
-
 The StateMachine allows you to outsource the order of states and which is next in line. At the end of an implementation, the main loop could look like this:
 
 ```c
