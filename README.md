@@ -49,9 +49,15 @@ Inside of a state function you can ask the **StateMachine** instance which state
 Each state is responsible of letting go of it's own state by caling `StateMachineInstance.release()` before they run out of scope. If a function misbehaves and skips this,
 the StateMachine instance will revert to it's mainstate automatically as to prevent endless loops and blocking code. This, however will interrupt the method's chained state, if it had one defined, which will not run in that case.
 
+
+
 **To use this library on an Arduino**:
+
 * Download this repository as a zip. Add it to libraries following this guide: https://www.arduino.cc/en/guide/libraries and scroll down to *Importing a .zip Library*.
-* Choose a datatype to bind with your state functions. This can be anything: and int,  *Recommended: enum class*
+
+  
+
+
 
 ### Chained states
 
@@ -95,7 +101,7 @@ void setup()
 
 
 
-### Here's an example:
+### Here's a full example:
 
 ```c
 #include "StateMachine.h"
@@ -105,63 +111,75 @@ void blinkLed();
 void startStepperMotor();
 void stopStepperMotor();
 void checkMotorTemp();
-void stop();
 void idle();
 
 enum class MyArduinoStates
 {
-    WAITING, // MAIN state
+    IDLE, // MAIN state
     BLINK_LED,
-    READ_SERIAL
-}
+    START_STEPPER_MOTOR,
+    STOP_STEPPER_MOTOR,
+    CHECK_MOTOR_TEMP
+};
 
 // Create a StateMachine
-StateMachine sm = StateMachine(&idle, State::IDLE);
+StateMachine<MyArduinoStates> sm = StateMachine<MyArduinoStates>(MyArduinoStates::IDLE, &idle);
 
 void setup()
 {
     // Add all the states which correlates to our functions
-    sm.addState(&blinkLed, States::BLINK_LED);
-    sm.addState(&stopStepperMotor, States::STOP_STEPPER_MOTOR)
-    sm.addState(&checkMotorTemp, States::CHECK_MOTOR_TEMP)
+    sm.addState(MyArduinoStates::BLINK_LED, &blinkLed);
+    sm.addState(MyArduinoStates::START_STEPPER_MOTOR, &startStepperMotor);
+    sm.addState(MyArduinoStates::STOP_STEPPER_MOTOR, &stopStepperMotor);
+    sm.addState(MyArduinoStates::CHECK_MOTOR_TEMP, &checkMotorTemp);
     
     // A chained mapping of state - the last one will run after the first one exhausts
-    sm.addState(&startStepperMotor, States::START_STEPPER_MOTOR, States::STOP_STEPPER_MOTOR);
+    sm.setChainedState(MyArduinoStates::STOP_STEPPER_MOTOR, MyArduinoStates::STOP_STEPPER_MOTOR);
+    
+    Serial.begin(9600);
 }
 
 void blinkLed()
 {
-    // led blinking code
+    Serial.println("Inside Blink Led function");
     sm.release();
 }
 void startStepperMotor()
 {
-    // start stepper motor code 
+    Serial.println("Inside startStepperMotor function");
     sm.release();
 }
 void stopStepperMotor()
 {
-    // stop stepper motor code 
+    Serial.println("Inside stopStepperMotor function");
     sm.release();
 }
 void checkMotorTemp()
 {
-    // check motor temp code
+    Serial.println("Inside checkMotorTemp function");
     sm.release();
 }
 
 void idle()
 {
-    if (key1_pressed) // psuedo code
+    static unsigned long last_run_millis;
+
+    Serial.println("Inside idle function");
+
+    if (millis() - last_run_millis >= 250)
     {
-        sm.transitionTo(States::START_STEPPER_MOTOR);
+        // The STOP_STEPPER_MOTOR state is chained - STOP_STEPPER_MOTOR will run after it, automatically.
+        sm.transitionTo(MyArduinoStates::START_STEPPER_MOTOR);
+        last_run_millis = millis();
     }
-    else if (key2_pressed) // psuedo code
+    else
     {
-    	sm.transitionTo(State::BLINK_LED);
+        // The state machine will return the pointer to this function next.
+        sm.transitionTo(MyArduinoStates::CHECK_MOTOR_TEMP);
     }
+    
     /*
-    	other code to perform during idle
+        .. other code to perform during idle, like checking sensors etc.
     */
 }
 
@@ -170,8 +188,47 @@ void loop()
 {
     sm.next()();
 }
-
 ```
 
 
 
+The following sketch is just a small example, without buttons or sensors obviously. 
+
+It yields the following output in the Serial monitor:
+
+```
+...
+22:36:28.999 -> Inside idle function
+22:36:29.046 -> Inside startStepperMotor function
+22:36:29.046 -> Inside stopStepperMotor function
+22:36:29.092 -> Inside idle function
+22:36:29.138 -> Inside checkMotorTemp function
+22:36:29.138 -> Inside idle function
+22:36:29.185 -> Inside checkMotorTemp function
+22:36:29.185 -> Inside idle function
+22:36:29.231 -> Inside checkMotorTemp function
+22:36:29.276 -> Inside idle function
+22:36:29.276 -> Inside startStepperMotor function
+22:36:29.322 -> Inside stopStepperMotor function
+
+....
+
+As you can see, it will automatically revert to the main state and perform the check. 
+Every quarter second it will run the motor. The StartStepperMotor is chained to the StopStepperMotor function,
+so the motors stop. In the meantime, the device can check the temperature of the motor. 
+
+This is maybe not the best state alteration design for a motor control device but it's just to illustrate
+how to develop with this library. 
+```
+
+
+
+### Author
+
+Simon Olofsson, dotchetter
+
+
+
+### Contributions
+
+Contributions to this project is more than welcome. Arduino and embedded is not my main domain but I really enjoy it and I hope this library makes it as much more easy and fun for you as it did for me! 
