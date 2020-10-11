@@ -22,6 +22,16 @@ void loop()
     mystateMachine.next()();
 }
 ```
+.. or if you don't fancy the double (), like this:
+```c
+void loop()
+{
+    fp_t func;
+    func = mystateMachine.next();
+    
+    func();
+}
+```
 
 ... and yes, that is supposed to be `()()` like that.
 
