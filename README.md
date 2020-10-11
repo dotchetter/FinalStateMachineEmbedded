@@ -22,10 +22,25 @@ void loop()
 
 
 
+### The problem it aims to solve
+
+Developing for IOT and embedded systems can usually generate lots of undesired spaghetti code.
+
+Due to the nature of the environment on a small system where memory is limited and the `loop` function where you continuously want to be listening for input/outputs from sensors or devices and not be blocking, the fact that the device can listen to these devices is **crucial.**
+
+A function which calls a function... which, calls a function. But only if that other function did something... hmmm.. global variables.  And then  a call to main. right? 
+
+See, this is dangerous and a quick path to stack overflow where the stack never gets the opportunity to return stack memory from it's previous execution. 
+
+The StateMachine will allow the `loop` function to continuously call **one** function which will point to the correct function, at the right time. Every function will return stack memory, and at the end of the call stack, the `main` method (state) will always be defaulted to, automatically, for your device to keep listening to radio, check buttons and perform other crucial tasks. 
+
 ### How to use it
 
-The StateMachine allows you to kick it back and let it handle the state alternation for you. 
-After you've instantiated it and given it function pointers with Enum's to bind them, you can simply call the `next()` method which will give you a pointer to the function for the state next in line.
+The idea here is that you have one function which is *not* looping and blocking but rather the default function that will be called, over and over and over. In this function, you can use `millis` or equivalent technique to determine whether it's time to check key presses or perform other tasks. 
+
+When it's time, from this **main state**, you use the `transitionTo()` method to tell the machine which state you want to be next in order. When your main method is out of scope (exhausted), the State Machine will automatically point the `loop` to the right function. 
+
+When this is performed and done, your **main state** function will automatically be defaulted to and called over and over again until it calls `transitionTo()` again. 
 
 The **StateMachine** will automatically revert to the idle function where you have code that read sensors, send things to WiFi or whatever else. Recursion is also taken care of - no risk of a function assigning itself as next in line - it's not allowed to.
 
@@ -36,26 +51,47 @@ the StateMachine instance will revert to it's mainstate automatically as to prev
 
 **To use this library on an Arduino**:
 * Download this repository as a zip. Add it to libraries following this guide: https://www.arduino.cc/en/guide/libraries and scroll down to *Importing a .zip Library*.
-* Open States.h where the library is installed, and edit the enum class to define the states you have in your firmware. The default ones are:
-```cpp
-enum class State
-{
-	IDLE,	// Default main state, editing requires modification of StateMachine.h row 80 col 57
-	READ_PROXIMITY_SENSOR,
-	STOP_MOTORS,
-	CHECK_KEY_PRESS
-};
-```
-
-
+* Choose a datatype to bind with your state functions. This can be anything: and int,  *Recommended: enum class*
 
 ### Chained states
 
-You can "chain" a state with another one, when it is added to the StateMachine. This only goes for one more link however, not a series of states in a row. This is so to prevent stack overflow or recursion somewhere in the state transition.
+Automatically returning to the main state is great and all, but sometimes we need one state to transition to another automatically and bypassing the main state, for a pre-defined sequence. 
 
-When you want to chain another state after a certain one has exhausted, it is simply passed as an additional optional argument when the `addState()` method is called.
+This can be attained by "chaining" a state with another one in the State Machine. If you choose the `int` datatype as your binding key for example, a chained state would look like: 
 
-**Do observe though**, that for a chained state to be added, it must first be added separately with the `addState()` method as any other. It cannot be added for the first time as a chained state.
+```cpp
+// Let's say you have functions "blinkLed" and "readSerial" declared in this sketch.
+// Create a StateMachine, and tell it which function should be the default function
+// in your program, and give it a "key" to refer to. I recommend Enum's but int or String // works fine as well.
+
+enum class MyArduinoStates
+{
+    IDLE, // MAIN state
+    BLINK_LED,
+    READ_SERIAL
+}
+
+// Create a global instance of the StateMachine. I'll use the enum class above as reference to my states and 
+// a function that i call idleFunction that I want the state machine to default to.
+StateMachine<MyArduinoStates> sm = StateMachine<MyArduinoStates>(MyArduinoStates::IDLE, &idleFunction);
+
+void setup()
+{
+    // Add states to the machine, in a <key, value> manner, binding the function to
+    // whatever key you assign.
+	sm.addState(&blinkLed, MyArduinoStates::BLINK_LED);
+    sm.addState(&readSerial, MyArduinoStates::READ_SERIAL);
+    
+    // Now, let's say that I want the arduino to automatically enter the readSerial
+    // function when it's done with the blinkLed function. I'll chain it!
+    // First parameter is the first state in the link, the second one is the state
+    // which should be run after it.
+    sm.chainState(MyArduinoStates::BLINK_LED, MyArduinoStates::READ_SERIAL);
+    
+}
+```
+
+
 
 
 
@@ -63,7 +99,6 @@ When you want to chain another state after a certain one has exhausted, it is si
 
 ```c
 #include "StateMachine.h"
-#include "States.h"  // Edit the enums in this file to match your desired states
 
 // compiler contract, we will define these later
 void blinkLed();
@@ -73,16 +108,26 @@ void checkMotorTemp();
 void stop();
 void idle();
 
+enum class MyArduinoStates
+{
+    WAITING, // MAIN state
+    BLINK_LED,
+    READ_SERIAL
+}
+
 // Create a StateMachine
 StateMachine sm = StateMachine(&idle, State::IDLE);
 
-// Add all the states which correlates to our functions
-sm.addState(&blinkLed, States::BLINK_LED);
-sm.addState(&startStepperMotor, States::STOP_STEPPER_MOTOR)
-sm.addState(&checkMotorTemp, States::CHECK_MOTOR_TEMP)
+void setup()
+{
+    // Add all the states which correlates to our functions
+    sm.addState(&blinkLed, States::BLINK_LED);
+    sm.addState(&stopStepperMotor, States::STOP_STEPPER_MOTOR)
+    sm.addState(&checkMotorTemp, States::CHECK_MOTOR_TEMP)
     
-// A chained mapping of state - the last one will run after the first one exhausts
-sm.addState(&startStepperMotor, States::START_STEPPER_MOTOR, States::STOP_STEPPER_MOTOR);
+    // A chained mapping of state - the last one will run after the first one exhausts
+    sm.addState(&startStepperMotor, States::START_STEPPER_MOTOR, States::STOP_STEPPER_MOTOR);
+}
 
 void blinkLed()
 {
