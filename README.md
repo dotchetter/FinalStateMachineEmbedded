@@ -14,6 +14,11 @@ which makes it easier to develop code with transitions between states in embedde
 
 ### Memory safe
 It can map up to `128` functions as states, and due to memory restrictions on small devices, these are statically allocated arrays of fixed size.
+
+### Key/Value pair-like syntax
+To add a state to the machine, you bind a function pointer to an object of your choice. The StateMachine uses templates, so you can use enums, strings, integers or anything of your liking to access your functions in the machine. *demo below* 
+
+### Provides a good design, helping to keep the project clean
 The StateMachine allows you to outsource the order of states and which is next in line. At the end of an implementation, the main loop could look like this:
 
 ```c
