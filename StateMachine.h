@@ -1,9 +1,7 @@
-#pragma once
-#include "States.h"
-#include "StateMachine.h"
-
 typedef void (*fp_t)();
 
+
+template<class State>
 class StateMachine
 /*
 * State machine class.
@@ -58,21 +56,21 @@ private:
 	State mainState;
 	fp_t mainMethod;	
 	fp_t methods[128];
-	State transitionalStates[128];
+	State chainedStates[128];
 	State states[128];
 	State nextState;
 	const fp_t getMethodForState(State state);
-	const State getTransitionalStateForState(State state);
+	const State getChainedStateForState(State state);
 
 public:
 
 	StateMachine(fp_t mainMethod, State mainState);
-		
 	const State getMainState();
 	const fp_t next();
-
 	const State getCurrentState();
 	void release();
 	void transitionTo(State state);
-	void addState(fp_t func, State state, State transition=State::IDLE);
+	void addState(fp_t func, State state);
+	void setChainedState(State chainFrom, State chainTo);
 };
+
