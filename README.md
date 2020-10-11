@@ -29,11 +29,11 @@ void loop()
 ```
 .. or if you don't fancy the double (), like this:
 ```c
+fp_t func;
+
 void loop()
 {
-    fp_t func;
     func = mystateMachine.next();
-    
     func();
 }
 ```
