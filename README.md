@@ -1,11 +1,11 @@
 # StateMachineEmbedded
 
 ### TLDR; Download ZIP library for Arduino IDE
-0. Click *Releases to the right
+0. Click *Releases* to the right
 2. Download the .zip file
 3. Open Arduino IDE and click **Sketch -> Include Library -> Import ZIP library**
-4. To use the library in a project click **Sketch -> Include Library -> StateMachineEmbedded
-5. To see examples, click **File -> Examples -> StateMachineEmbedded
+4. To use the library in a project click **Sketch -> Include Library -> StateMachineEmbedded**
+5. To see examples, click **File -> Examples -> StateMachineEmbedded**
 
 ### What it does
 
