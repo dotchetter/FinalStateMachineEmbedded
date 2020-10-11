@@ -83,9 +83,9 @@ StateMachine<MyArduinoStates> sm = StateMachine<MyArduinoStates>(MyArduinoStates
 
 void setup()
 {
-    // Add states to the machine, in a <key, value> manner, binding the function to
-    // whatever key you assign.
-	sm.addState(&blinkLed, MyArduinoStates::BLINK_LED);
+    // Add states to the machine, in a <key, value> manner, 
+    // binding the function to whatever key you assign.
+    sm.addState(&blinkLed, MyArduinoStates::BLINK_LED);
     sm.addState(&readSerial, MyArduinoStates::READ_SERIAL);
     
     // Now, let's say that I want the arduino to automatically enter the readSerial
