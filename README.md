@@ -70,45 +70,9 @@ the StateMachine instance will revert to it's mainstate automatically as to prev
 
 Automatically returning to the main state is great and all, but sometimes we need one state to transition to another automatically and bypassing the main state, for a pre-defined sequence. 
 
-This can be attained by "chaining" a state with another one in the State Machine. If you choose the `int` datatype as your binding key for example, a chained state would look like: 
+This can be attained by "chaining" a state with another one in the State Machine.
 
-```cpp
-// Let's say you have functions "blinkLed" and "readSerial" declared in this sketch.
-// Create a StateMachine, and tell it which function should be the default function
-// in your program, and give it a "key" to refer to. I recommend Enum's but int or String // works fine as well.
-
-enum class MyArduinoStates
-{
-    IDLE, // MAIN state
-    BLINK_LED,
-    READ_SERIAL
-}
-
-// Create a global instance of the StateMachine. I'll use the enum class above as reference to my states and 
-// a function that i call idleFunction that I want the state machine to default to.
-StateMachine<MyArduinoStates> sm = StateMachine<MyArduinoStates>(MyArduinoStates::IDLE, &idleFunction);
-
-void setup()
-{
-    // Add states to the machine, in a <key, value> manner, 
-    // binding the function to whatever key you assign.
-    sm.addState(&blinkLed, MyArduinoStates::BLINK_LED);
-    sm.addState(&readSerial, MyArduinoStates::READ_SERIAL);
-    
-    // Now, let's say that I want the arduino to automatically enter the readSerial
-    // function when it's done with the blinkLed function. I'll chain it!
-    // First parameter is the first state in the link, the second one is the state
-    // which should be run after it.
-    sm.chainState(MyArduinoStates::BLINK_LED, MyArduinoStates::READ_SERIAL);
-    
-}
-```
-
-
-
-
-
-### Here's a full example:
+### Here's a full example also demonstrating Chained states:
 
 ```c
 #include "StateMachine.h"
