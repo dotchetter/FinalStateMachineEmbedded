@@ -33,9 +33,6 @@ void loop()
 }
 ```
 
-... and yes, that is supposed to be `()()` like that.
-
-
 
 ### The problem it aims to solve
 
