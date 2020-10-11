@@ -1,6 +1,5 @@
 #pragma once
 #include "StateMachine.h"
-#include <iostream>
 
 template<class State>
 StateMachine<State>::StateMachine(fp_t mainMethod, State state)
@@ -106,7 +105,7 @@ const fp_t StateMachine<State>::next()
 * 
 * Protects the application from an infinite loop where
 * the state is left unchanged by misbehaving state methods
-* which do not call the transition() method. This validation
+* which do not call the release() method. This validation
 * is implemented by not allowing the same state to occur twice
 * or more in sequence.
 */
