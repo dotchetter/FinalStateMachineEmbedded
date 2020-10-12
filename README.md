@@ -1,6 +1,6 @@
 # StateMachineEmbedded
 
-### TLDR: lemme smash. How to download ZIP library for Arduino IDE:
+### TLDR: How do I download ZIP library for Arduino IDE?
 0. Click *Releases* to the right
 2. Download the .zip file
 3. Open Arduino IDE and click **Sketch -> Include Library -> Import ZIP library**
