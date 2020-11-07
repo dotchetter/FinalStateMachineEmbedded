@@ -37,6 +37,8 @@ bld/
 
 # Visual Studio 2017 auto generated files
 Generated\ Files/
+*vcxproj*
+*sln*
 
 # MSTest test Results
 [Tt]est[Rr]esult*/
